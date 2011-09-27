@@ -1,5 +1,13 @@
 CLASSES
 
+Reader
+* Reads input file
+  - Currently, EasyABC seems to be the best solution
+  - Input format: MusicXML or MIDI
+  - Output format: abc
+
+
+
 Fretboard
  * Models the notes on a fretboard
  * Maps notes to 2-tuples (i.e. fretted-positions): <string, fret>
@@ -8,21 +16,66 @@ Fretboard
    - 'up' is a +/- measure of how many strings separate the two positions
    - 'across' is a +/- measure of how many frets separate the two positions
 
+
+
 Hand
-* A generic class to represent a hand
+* Generic class to represent a hand
 - LeftHand
   * Maintains state for each of the four fret-able fingers on left hand
   * Implicitly (?) maintains hand-position (i.e. where is the first finger (index finger) on the fretboard)
     - Any advantage in explicitly maintaining this?
   * Array of four 3-tuples (i.e. finger-positions) : <string, fret, finger>
   * Computes difficulty-metric between finger-positions
-    - 'Difficulty-metric' is a subjective measure of how difficult it is to move between two finger-positions
+    - 'difficulty-metric' is a subjective measure of how difficult it is to move between two finger-positions
 - RightHand
   * Maintains state for each of the five pick-able fingers on right hand
   * Array of five 2-tuples: <string, finger>
 
-Reader
-* Reads input file
-  - Currently, EasyABC seems to be the best solution
-  - Input format: MusicXML
-  - Output format: abc
+
+
+Player
+* This is the main class. Simulates a guitar player by instantiating a Fretboard and Hand objects
+* Determines best path between finger-positions given an input melody
+  - "best path" is the minimization of the difficulty-metrics between a set of consecutive finger-positions
+
+
+
+Score
+* An interface for handling the input music file
+* Gives access to notes/chords ('mits'), measures & phrases ('mytes'), and key/time signatures
+* Mits and myths are returned as arrays of each object
+* Key signatures can be useful for recognizing idioms
+
+
+Mit (music-bit)
+* Generic class for representing a single note, chord, or rest
+* This class is useful for interpreting a Score object and is used by the Player to make decisions
+* While mits are members of Scores, a mit is a generic object and independent of Scores
+* Mits are represented by a 2-tuple: <name, length>
+- Note
+  * A single note or rest
+  * 'name' is any one of {A-G#,R}
+  * 'length' is a numeric representation of note-duration (i.e. '1/4' for quarter note, etc.)
+- Chord
+  * A single chord
+  * Chord 'names' are slightly more complicated than note names:
+    - Major/minor are differentiated with upper/lower case, respectively
+    - Are prefixed with an underscore (i.e. _F# is an F# chord) to differentiate between notes and chords
+    - Extensions are appended to the end of the name
+      - Posi
+  * Potentially maintain a mapping of (basic) chord structures/fingerings
+    - There are a number of ways to finger any chord, so this might be unfeasible
+    - Could potentially be used to identify arpeggio fingerings
+
+
+Myte (music-bytes)
+* Generic class for representing measures and phrases in a Score
+* Unlike mits, mytes are dependent on a Score and must be preprocessed
+- Measure
+  * A string of notes within a measure of music
+- Phrase
+  * A string of measure(s) within a phrase of music
+  * A phrase is largely subjective, and is loosely defined as a set of mits representing a single musical idea, often surrounded by rests
+    - Phrases serve to divide the computation of "best paths" into smaller, more manageable chunks
+    - Personal experience shows that the fingerings of individual phrases are often independent of other phrases
+
