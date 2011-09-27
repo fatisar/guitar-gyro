@@ -1,0 +1,28 @@
+CLASSES
+
+Fretboard
+ * Models the notes on a fretboard
+ * Maps notes to 2-tuples (i.e. fretted-positions): <string, fret>
+   - A note can be played in multiple positions; returns all possible positions
+ * Calculates distance between fretted-positions using the following encoding: <up, across>
+   - 'up' is a +/- measure of how many strings separate the two positions
+   - 'across' is a +/- measure of how many frets separate the two positions
+
+Hand
+* A generic class to represent a hand
+- LeftHand
+  * Maintains state for each of the four fret-able fingers on left hand
+  * Implicitly (?) maintains hand-position (i.e. where is the first finger (index finger) on the fretboard)
+    - Any advantage in explicitly maintaining this?
+  * Array of four 3-tuples (i.e. finger-positions) : <string, fret, finger>
+  * Computes difficulty-metric between finger-positions
+    - 'Difficulty-metric' is a subjective measure of how difficult it is to move between two finger-positions
+- RightHand
+  * Maintains state for each of the five pick-able fingers on right hand
+  * Array of five 2-tuples: <string, finger>
+
+Reader
+* Reads input file
+  - Currently, EasyABC seems to be the best solution
+  - Input format: MusicXML
+  - Output format: abc
