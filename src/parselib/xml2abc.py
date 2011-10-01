@@ -400,7 +400,7 @@ def mxl_to_xml(filename):
     return zf.open(first_file)                    
 
 def xml_to_abc(filename):
-    global default_len    
+    global default_len
     if os.path.splitext(filename)[1].lower() == '.mxl':
         root = ElementTree().parse(mxl_to_xml(filename))
     else:
@@ -419,9 +419,13 @@ def xml_to_abc(filename):
             tune_fields.append(Field('T', root.findtext('movement-title', '').strip()))        
         for credit in root.findall('credit'):
             credits = ''.join(e.text or '' for e in credit.findall('credit-words'))
-            credits = credits.translate(None, '\r\n')
-            if credits.strip():
-                tune_fields.append(Field('T', credits))        
+
+            # ran into issues with Unicode strings, so except TypeError to avoid processing these strings
+            try:
+                credits = credits.translate(None, '\r\n')
+                if credits.strip():
+                    tune_fields.append(Field('T', credits))
+            except TypeError: pass
         for creator in root.findall('identification/creator'):
             if creator.get('type') == 'composer':
                 for line in creator.text.split('\n'):
@@ -505,7 +509,9 @@ def xml_to_abc(filename):
                         elif note.find('rest') is not None:                  
                             note_name = 'z'
                         else:
-                            note_name = note.findtext('pitch/step') + note.findtext('pitch/octave')
+                            if note.findtext('pitch/step') != None and note.findtext('pitch/octave') != None:
+                                note_name = note.findtext('pitch/step') + note.findtext('pitch/octave')
+                            else: note_name = "?"
 
                         # duration and whether it's a grace note
                         is_grace_note = note.find('grace') is not None                
@@ -546,15 +552,17 @@ def xml_to_abc(filename):
 
                         # accidental
                         if not note_name in 'zx': # unless rest or invisible rest
-                            alter = int(note.findtext('pitch/alter', '0'))                
-                            if alter != measure_accidentals[note_name] or note.find('accidental') is not None:
-                                n.accidental = {-2: '__',
-                                                -1: '_',
-                                                 0: '=',
-                                                 1: '^',
-                                                 2: '^^'}[alter]                                
-                                measure_accidentals[note_name] = alter
-                                notes_with_accidentals_in_this_measure.add(note_name)
+                            alter = int(note.findtext('pitch/alter', '0'))
+                            try:
+                                if alter != measure_accidentals[note_name] or note.find('accidental') is not None:
+                                    n.accidental = {-2: '__',
+                                                    -1: '_',
+                                                     0: '=',
+                                                     1: '^',
+                                                     2: '^^'}[alter]
+                                    measure_accidentals[note_name] = alter
+                                    notes_with_accidentals_in_this_measure.add(note_name)
+                            except KeyError: print "Error processing accidental. Skipping..."
 
                         # tie            
                         tie = note.find('tie')
