@@ -9,25 +9,25 @@ from LeftHand import LeftHand
 lhand = LeftHand()
 
 class Transition:
-    def __init__(self, start_node, end_node):
-        self._start_node = start_node
-        self._end_node = end_node
-        self._dist = start_node.distance(end_node)
+    def __init__(self, start_note, end_note):
+        self._start_note = start_note
+        self._end_note = end_note
+        self._dist = start_note.distance(end_note)
         self._combos = lhand.get_combo_by_distance(self._dist)
 
     def __str__(self):
-        cstr = "hi"#".join(["%s," % c for c in self._combos])
-        print "new:%s" % self._start_node
-        for c in self._combos:
-            print c
+        cstr = "".join(["{0},".format(c) for c in self._combos])
+
         return "< %s ->  %s  %s : %s >" % (self._start_node,self._end_node,self._dist,cstr)
 
-class Node:
+class PhraseNode:
 
     def __init__(self, fnote, transitions):
         self._fnote = fnote
-        self._transitions = [Transition(fnote,t) for t in transitions]
+        all_trans = [Transition(fnote,t) for t in transitions]
+        self._transitions = [tr for tr in all_trans if len(tr._combos) > 0]        # clear out any transitions that are impossible
 
+        
     def __str__(self):
         trans = "".join(["%s" % t for t in self._transitions])
         return "%s" % trans
@@ -44,7 +44,7 @@ class PhraseGraph:
             fnotes = self._note_map[phrase[n]]
             trans = self._note_map[phrase[n+1]]
             for fn in fnotes:
-                self._graph.append((Node(fn,trans)))
+                self._graph.append(PhraseNode(fn,trans))
 
 
     def __str__(self):
