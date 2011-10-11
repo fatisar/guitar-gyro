@@ -9,9 +9,9 @@ class FrettedNote:
         self._name = "%s [%s]" % (self._note_name,self._id)
 
     def distance(self,other_note):
-        # 'note - self' for string since moving 'up' the fretboard (i.e. towards a higher string) is +
-        # 'self - note' for fret since moving across towards the bridge is -
-        return (other_note._string - self._string, self._fret - other_note._fret)
+        # 'other - self' for string since moving 'up' the fretboard (i.e. towards a higher string) is +
+        # 'self - other' for fret since moving across towards the bridge is -
+        return (other_note._string - self._string, other_note._fret - self._fret)
 
     def __str__(self):
         return "%s" % self._name

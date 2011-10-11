@@ -12,6 +12,6 @@ def grabsamples(directory):
             if f[0] == ".": continue
             player.read_and_parse_file("%s/%s" % (v[0],f))
 
-grabsamples("../media")
+#grabsamples("../media")
 
 #player.read_and_parse_file("../media/Binchois.xml")

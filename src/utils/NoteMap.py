@@ -7,12 +7,12 @@ class NoteMap:
     postfix = (",","","'","''")
     letters = ("E","F","F#","G","G#","A","A#","B","C","C#","D","D#")
 
-    _note_map = dict()
     octave = 0
     oct_cnt = 16        # a count to determine when to increment 'octave'. starts at 16 to accommodate the layout of the guitar
     str_offset = 0      # an offset to determine the appropriate fret since letters[0] always starts with 'E'
 
     def __init__(self):
+        self._note_map = dict()
         self.generate_note_map()
     
     # NOTE: contrary to standard notation, the strings are numbered from 0-5, where 0 is the low E string

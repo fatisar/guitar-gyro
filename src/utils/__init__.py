@@ -3,3 +3,4 @@
 from NoteMap import NoteMap
 from FrettedNote import FrettedNote
 from Note import Note
+from PhraseGraph import PhraseGraph

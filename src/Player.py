@@ -19,7 +19,7 @@ class Player:
         header_i = 0    # an index to the end of the header
 
         header_re = re.compile("\d:")
-        # iterate through score until we find 'V:', the end of the header section
+        # iterate through score until we find "V:", the end of the header section
         while header_re.search(score[header_i:header_i+2]) != None:   # V: is presumably the beginning of the last line of the header
             header_i += 1
         header_end = score.find("\n",header_i) + 2  # +2 to include the newline
@@ -45,4 +45,6 @@ class Player:
     def __init__(self):
         print "initializing default Player..."
         self._note_map = NoteMap()._note_map
-        
+        phrase = ["C","E","G","B'","C'"]
+        self._phrase_graph = PhraseGraph(phrase)
+        print "%s" % self._phrase_graph
