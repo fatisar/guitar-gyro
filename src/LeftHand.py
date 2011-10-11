@@ -56,7 +56,6 @@ class LeftHand:
         d_str = dist[0]
         metric = 0 if d_str == 0 else (1 if d_str >= 1 else 2)
         cd = self._combo_dexterities
-        print "d:%s     met:%s" % (dist,metric)
         combos = [(start,end,cd[start][end][metric]) for start in range(len(cd)) for end in range(len(cd[start])) if cd[start][end][0] == dist[1]]
         return combos
 

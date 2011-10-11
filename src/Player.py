@@ -20,7 +20,7 @@ class Player:
 
         header_re = re.compile("\d:")
         # iterate through score until we find "V:", the end of the header section
-        while header_re.search(score[header_i:header_i+2]) != None:   # V: is presumably the beginning of the last line of the header
+        while header_re.search(score[header_i:header_i+2]) is not None:   # V: is presumably the beginning of the last line of the header
             header_i += 1
         header_end = score.find("\n",header_i) + 2  # +2 to include the newline
         self.header_fields = self.tokenize_header(score[0:header_end])
