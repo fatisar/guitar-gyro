@@ -23,6 +23,7 @@ class LeftHand:
         d = (d0,d1,d2,d3,d4)
         self._dex = [(d[i]/float(i),) * 5 for i in range(1,5)]
         self.generate_combo_dexterities()
+        self._metric = 0
 
     def generate_combo_dexterities(self):
         cd = self._combo_dexterities        # cd[start-finger][end-finger]
@@ -54,11 +55,18 @@ class LeftHand:
 
     def get_combo_by_distance(self, dist):
         d_str = dist[0]
-        metric = 0 if d_str == 0 else (1 if d_str >= 1 else 2)
+        metric = 1 if d_str == 0 else (2 if d_str >= 1 else 3)      # metric is used to determine whether to use same-string (1), up-string (2), down-string (3)
+        self._metric = metric
         cd = self._combo_dexterities
+        # combos is a list of _combo_dexterities 4-tuples for a particular finger-displacement (i.e. fret distance between two fingers)
+        #   ex. combos = [(1,2,2.0),(2,3,2.0),(3,4,1.5)] if dist == (0,1.0)
         combos = [(start,end,cd[start][end][metric]) for start in range(len(cd)) for end in range(len(cd[start])) if cd[start][end][0] == dist[1]]
         return combos
 
+    def get_combo_by_finger(self, finger):
+        cd = self._combo_dexterities
+        combos = [(start,end,cd[start][end][self._metric]) for start in range(len(cd)) for end in range(len(cd[start])) if start == finger]
+        return combos
 
     def __str__(self):
         for i in range(5):
